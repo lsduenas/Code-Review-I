@@ -11,7 +11,8 @@ import (
 type ServiceVehicle interface {
 	// GetAll returns all vehicles
 	GetAll() (v []*domain.Vehicle, err error)
-	SaveVehicles(vehiclesList [] domain.Vehicle) (err error)
+	SaveVehicles(vehiclesList []domain.Vehicle) (err error)
+	GetByColorAndYear(color string, year int) (vehiclesList []*domain.Vehicle, err error)
 }
 
 var (
@@ -20,4 +21,10 @@ var (
 
 	// ErrServiceVehicleNotFound is returned when no vehicle is found.
 	ErrServiceVehicleNotFound = errors.New("service: vehicle not found")
+
+	// ErrServiceVehiclesNotFound is returned when no vehicles is found.
+	ErrServiceVehiclesNotFound = errors.New("service: vehicles not found")
+
+	// ErrServiceVehicleAlreadyExist is returned when a vehicle already exists in database
+	ErrServiceVehicleAlreadyExist = errors.New("service: vehicle already exists")
 )

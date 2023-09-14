@@ -9,10 +9,10 @@ import (
 type RepositoryVehicle interface {
 	// GetAll returns all vehicles
 	GetAll() (v []*domain.Vehicle, err error)
-	WriteJSONFile(vehiclesList []* VehicleAttributesJSON) (err error)
+	WriteJSONFile(vehiclesList []*VehicleAttributesJSON) (err error)
 
 	// Save() (err error)
-	// GetByColorAndYear(color string, year string) (v []*domain.Vehicle, err error)
+	GetByColorAndYear(color string, year int) (v []*domain.Vehicle, err error)
 	// GetByBrandAndYearsRange(brand string, start_year int, end_year int) (v []*domain.Vehicle, err error)
 	// GetAverageSpeedByBrand(brand string) (average float64)
 	SaveVehicles(vehicleList []domain.Vehicle) (err error)
@@ -33,8 +33,12 @@ var (
 	// ErrRepositoryVehicleNotFound is returned when a vehicle is not found.
 	ErrRepositoryVehicleNotFound = errors.New("repository: vehicle not found")
 
-	// ErrRepositoryCantUpdateJSONFile is returned when it's not posible update the JSON file 
+	// ErrRepositoryVehicleAlreadyExist is returned when a vehicle already exists in database
+	ErrRepositoryVehicleAlreadyExist = errors.New("repository: vehicle already exists")
+
+	// ErrRepositoryCantUpdateJSONFile is returned when it's not posible to update the JSON file
 	ErrRepositoryVehicleCantUpdateJSONFile = errors.New("repository: can't update JSON file")
 
-
+	// ErrRepositoryCantUpdateJSONFile is returned when it's not posible to create the JSON file
+	ErrRepositoryVehicleCantCreateJSONFile = errors.New("repository: can't create JSON file")
 )

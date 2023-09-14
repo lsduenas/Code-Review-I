@@ -40,6 +40,7 @@ func main() {
 	// endpoints 
 	grVh.GET("", ctVh.GetAll())
 	grVh.POST("/batch", ctVh.SaveVehicles())
+	grVh.GET("/color/:color/year/:year", ctVh.GetByColorAndYear())
 
 	// run
 	if err := rt.Run(os.Getenv("SERVER_ADDR")); err != nil {

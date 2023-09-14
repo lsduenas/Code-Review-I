@@ -3,7 +3,6 @@ package repository
 import (
 	"app/internal/domain"
 	"encoding/json"
-	"errors"
 	"os"
 )
 
@@ -86,11 +85,10 @@ func (s *RepositoryVehicleInMemory) SaveVehicles(vehicleList []domain.Vehicle) (
 	for _, vehicle := range v {
 		for _, newVehicle := range vehicleList {
 			if vehicle.Id == newVehicle.Id {
-				err = errors.New("Algún vehículo tiene un identificador ya existente.")
+				err = ErrRepositoryVehicleAlreadyExist
 				return
 			}
 		}
-
 	}
 
 	// add new vehicles from list [] domain.Vehicle
@@ -114,17 +112,17 @@ func (s *RepositoryVehicleInMemory) SaveVehicles(vehicleList []domain.Vehicle) (
 	}
 	err = s.WriteJSONFile(v)
 	if err != nil {
-		err = errors.New("Internal server error")
+		err = ErrRepositoryVehicleCantUpdateJSONFile
 		return
 	}
 	return
 }
 
-// update the json file of vehicles 
+// update the json file of vehicles
 func (s *RepositoryVehicleInMemory) WriteJSONFile(vehiclesList []*VehicleAttributesJSON) (err error) {
 	file, err := os.Create(s.path)
 	if err != nil {
-		err = errors.New("Can not create file")
+		err = ErrRepositoryVehicleCantCreateJSONFile
 		return
 	}
 	defer file.Close()
@@ -134,4 +132,28 @@ func (s *RepositoryVehicleInMemory) WriteJSONFile(vehiclesList []*VehicleAttribu
 		return
 	}
 	return nil
+}
+
+func (s *RepositoryVehicleInMemory) GetByColorAndYear(color string, year int) (v []*domain.Vehicle, err error) {
+	// check if the database is empty
+	if len(s.db) == 0 {
+		err = ErrRepositoryVehicleNotFound
+		return
+	}
+
+	// get all vehicles from the database
+	v = make([]*domain.Vehicle, 0, len(s.db))
+	for key, value := range s.db {
+		if value.Color == color && value.Year == year {
+			v = append(v, &domain.Vehicle{
+				Id:         key,
+				Attributes: *value,
+			})
+		}
+	}
+	if len(v) == 0 {
+		err = ErrRepositoryVehicleNotFound
+		return
+	}
+	return
 }
